@@ -1,0 +1,20 @@
+name: release latest
+on:
+  push:
+    branches:
+      - main
+
+  workflow_dispatch:
+
+jobs:
+
+  build-push:
+    uses: bolhaverso/workflows/.github/workflows/docker-build-push.yml@main
+    with:
+      repo: bolhaverso/bookwyrm
+      platforms: "linux/amd64"
+      tag: latest
+      push: false
+    secrets:
+      username: ${{ secrets.USERNAME }}
+      password: ${{ secrets.PASSWORD }}

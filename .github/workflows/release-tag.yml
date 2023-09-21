@@ -1,0 +1,33 @@
+name: release tag
+on:
+  push:
+    tags:
+      - 'v*'
+
+  workflow_dispatch:
+
+jobs:
+
+  extraction:
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.tag.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Extract tag
+        uses: ncipollo/semantic-version-action@v1
+        id: tag
+
+  build-push:
+    needs:
+      - extraction
+    uses: bolhaverso/workflows/.github/workflows/docker-build-push.yml@main
+    with:
+      repo: bolhaverso/bookwyrm
+      platforms: "linux/amd64"
+      tag: ${{ needs.extraction.outputs.tag }}
+      push: false
+    secrets:
+      username: ${{ secrets.USERNAME }}
+      password: ${{ secrets.PASSWORD }}
